@@ -1,4 +1,4 @@
-addon.name = "toastnotif"
+addon.name = "toastynotif"
 addon.author = "Reyuu"
 addon.version = "0.1" -- incremental versioning +0.1 scale
 addon.desc = "This addon adds toast notifications"
@@ -226,6 +226,11 @@ local function toast_update()
                 end
                 local searchable_string = drawn_objects[slot].text
                 searchable_string = string.gsub(searchable_string, "a ", "")
+                -- there are all of thosee weird quantifiers for items, hangup from japanese version probably
+                searchable_string = string.gsub(searchable_string, "pot of ", "")
+                searchable_string = string.gsub(searchable_string, "bag of ", "")
+                searchable_string = string.gsub(searchable_string, "clump of ", "")
+                searchable_string = string.gsub(searchable_string, "strip of ", "")
                 searchable_string = string.gsub(searchable_string, "an ", "")
                 searchable_string = string.gsub(searchable_string, "the ", "")
                 searchable_string = string.gsub(searchable_string, "The ", "")
@@ -237,7 +242,6 @@ local function toast_update()
                 if not(item_id == nil) then
                     drawn_objects[slot].item_icon = load_item_texture_pointer(item_id.Id)
                 end
-
                 
                 if addon_settings.animation.horizontal == "to_left" then
                     local to_x = drawn_objects[slot].x
