@@ -1,6 +1,6 @@
 # Toasty!
 <p align="center">
-<img src="./toastynotif/readme_assets/logo.png" />
+<img src="https://github.com/user-attachments/assets/699535ed-7add-4374-961c-374402b88d40" />
 </p>
 
 ## Overview
