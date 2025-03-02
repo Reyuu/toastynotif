@@ -320,8 +320,7 @@ end
 
 local function toast_text_in(e)
     local matched = nil
-    for i,v in ipairs({"You find (.*) on [.]*.",
-                          "Obtained: (.*)",
+    for i,v in ipairs({"Obtained: (.*)",
                           "Siraya obtains (.*)%."}) do
         matched = string.match(e.message, v)
         if not(matched == nil) then
