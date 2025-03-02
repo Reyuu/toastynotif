@@ -1,5 +1,8 @@
 # Toasty!
-![](./toastynotif/readme_assets/logo.png)
+<p align="center">
+<img src="./toastynotif/readme_assets/logo.png" />
+</p>
+
 ## Overview
 Toasty is an addon for Ashita v4, which displays toast notifications every time you pickup an item!
 ## Installation
@@ -19,9 +22,7 @@ Settings window can be accessed through `/toastynotif settings`.
 You can test your settings via `/toastynotif test`.
 
 ## Example
-[![](./toastynotif/readme_assets/example.gif)](./toastynotif/readme_assets/example.mp4)
-
-(click for a bigger vid with sound!)
+https://github.com/user-attachments/assets/1c569942-cc57-42b0-8617-e905cf6baf5f
 
 ## Planned features
 - styling of the popup
