@@ -490,6 +490,9 @@ local function settings_window_render()
                     end
                     imgui.EndCombo()
                 end
+                if (imgui.Button("Preview")) then
+                    play_sound(s.sound)
+                end
                 imgui.EndTable()
                 
             end
