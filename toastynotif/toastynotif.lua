@@ -1,6 +1,6 @@
 addon.name = "toastynotif"
 addon.author = "Reyuu"
-addon.version = "0.1" -- incremental versioning +0.1 scale
+addon.version = "0.2" -- incremental versioning +0.1 scale
 addon.desc = "This addon adds toast notifications"
 
 --------------------------
@@ -58,7 +58,7 @@ local addon_default_settings = T{
     padding=10,
     max_slots=3,
     inverted_direction=true,
-    sound="206.wav"
+    sound="ffvii_sound0.wav"
 }
 
 
@@ -235,6 +235,9 @@ local function toast_update()
                 searchable_string = string.gsub(searchable_string, "the ", "")
                 searchable_string = string.gsub(searchable_string, "The ", "")
                 searchable_string = string.gsub(searchable_string, "%d+ ", "")
+                if searchable_string == "Gausebit wildgrass" then
+                    searchable_string = "Gausebit Grass"
+                end
                 if searchable_string == "gil" then
                     searchable_string = "Counterfeit Gil"
                 end
@@ -324,8 +327,10 @@ end
 
 local function toast_text_in(e)
     local matched = nil
-    for i,v in ipairs({"Obtained: (.*)",
-                          "Siraya obtains (.*)%."}) do
+    for i,v in ipairs({ "Obtained: (.*)",
+                        "Obtained key item: (.*)",
+                        ".* obtains (.*)%.",
+                        ".* obtains a temporary item: (.*)%."}) do
         matched = string.match(e.message, v)
         if not(matched == nil) then
             matched = string.gsub(matched, "[^%w%s]+", "")
