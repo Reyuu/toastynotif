@@ -4,7 +4,11 @@
 </p>
 
 ## Overview
-Toasty is an addon for Ashita v4, which displays toast notifications every time you pickup an item!
+Toasty is an addon for Ashita v4, which displays toast notifications every time you pick up an item!
+
+> [!NOTE]
+> The addon works by checking for specific a chat message, while this isn't fully efficient, it mimics vanilla behaviour - you know you got the item by checking chat anyways.
+
 ## Installation
 1. Paste the addon into your addon folder in Ashita v4 installation.
 2. Activate the addon with `/addon load toastynotif`
