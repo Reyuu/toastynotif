@@ -175,7 +175,7 @@ local function drawable_init()
     return {
         x = addon_settings.padding, -- anything for debugging
         y = addon_settings.padding, -- anything for debugging
-        text="a sheepskin",
+        text="Cheese Sandwich +1",
         count=-1,
         done=false,
         wait_before_moving=addon_settings.animation.wait_before_moving,
@@ -238,10 +238,10 @@ local function toast_update()
                     drawn_objects[slot].y = drawn_objects[slot].y + ((addon_settings.rectangle.height + addon_settings.padding) * (slot - 1))
                 end
                 local searchable_string = drawn_objects[slot].text
-                searchable_string = string.gsub(searchable_string, "%d+ ", "")
-                searchable_string = string.gsub(searchable_string, "a ", "")
-                searchable_string = string.gsub(searchable_string, "an ", "")
-                searchable_string = string.gsub(searchable_string, "the ", "")
+                searchable_string = string.gsub(searchable_string, "^%d+ ", "")
+                searchable_string = string.gsub(searchable_string, "^a ", "")
+                searchable_string = string.gsub(searchable_string, "^an ", "")
+                searchable_string = string.gsub(searchable_string, "^the ", "")
                 local cached_item = item_cache[searchable_string:lower()]
 
                 local item_id = nil
@@ -249,11 +249,11 @@ local function toast_update()
                     item_id = cached_item
                 else
                     -- there are all of thosee weird quantifiers for items, hangup from japanese version probably
-                    searchable_string = string.gsub(searchable_string, "pot of ", "")
-                    searchable_string = string.gsub(searchable_string, "bag of ", "")
-                    searchable_string = string.gsub(searchable_string, "clump of ", "")
-                    searchable_string = string.gsub(searchable_string, "strip of ", "")
-                    searchable_string = string.gsub(searchable_string, "slice of ", "")
+                    searchable_string = string.gsub(searchable_string, "^pot of ", "")
+                    searchable_string = string.gsub(searchable_string, "^bag of ", "")
+                    searchable_string = string.gsub(searchable_string, "^clump of ", "")
+                    searchable_string = string.gsub(searchable_string, "^strip of ", "")
+                    searchable_string = string.gsub(searchable_string, "^slice of ", "")
                     if searchable_string == "gil" then
                         searchable_string = "Counterfeit Gil"
                     end
@@ -337,6 +337,7 @@ local function toast_commands(e)
         end
     end
     if (e.command == "/toastynotif test") then
+        cache_item(5687)
         for i=1,addon_settings.max_slots+1,1 do
             local d = drawable_init()
             table.insert(queue, d)
