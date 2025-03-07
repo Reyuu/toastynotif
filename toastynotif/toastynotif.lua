@@ -1,6 +1,6 @@
 addon.name = "toastynotif"
 addon.author = "Reyuu"
-addon.version = "0.2" -- incremental versioning +0.1 scale
+addon.version = "0.3" -- incremental versioning +0.1 scale
 addon.desc = "This addon adds toast notifications"
 
 --------------------------
