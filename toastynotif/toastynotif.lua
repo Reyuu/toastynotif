@@ -35,6 +35,8 @@ local settings_window_display = { false }
 local sounds_directory = addon.path:append('\\assets\\')
 local sounds_files = {}
 
+local logo_image = nil
+
 local addon_default_settings = T{
     animation=T{
         horizontal = "to_right", -- valid options: to_left, to_right
@@ -163,6 +165,27 @@ local function load_item_texture_pointer(itemid)
     end
 
     return d3d.gc_safe_release(ffi.cast('IDirect3DTexture8*', texture_ptr[0]));
+end
+
+function load_texture_from_file(textureName)
+    if (theme == nil or theme == "") then
+        theme = "default";
+    end
+
+    local textures = T{}
+    -- Load the texture for usage..
+    local texture_ptr = ffi.new('IDirect3DTexture8*[1]');
+    local texture_path = string.format("images\\%s", textureName)
+    texture_path = addon.path:append(texture_path)
+    local res = C.D3DXCreateTextureFromFileA(d3d8dev, texture_path, texture_ptr);
+    if (res ~= C.S_OK) then
+--      error(('Failed to load image texture: %08X (%s)'):fmt(res, d3d.get_error(res)));
+        return nil;
+    end;
+    textures.image = ffi.new('IDirect3DTexture8*', texture_ptr[0]);
+    d3d.gc_safe_release(textures.image);
+
+    return textures;
 end
 
 --------------------------
@@ -325,6 +348,14 @@ local function toast_render()
     end
 end
 
+function notification_test()
+    cache_item(5687)
+    for i=1,addon_settings.max_slots+1,1 do
+        local d = drawable_init()
+        table.insert(queue, d)
+    end
+end
+
 local function toast_commands(e)
     if (e.command == "/toastynotif help") then
         local help_text = {
@@ -337,11 +368,7 @@ local function toast_commands(e)
         end
     end
     if (e.command == "/toastynotif test") then
-        cache_item(5687)
-        for i=1,addon_settings.max_slots+1,1 do
-            local d = drawable_init()
-            table.insert(queue, d)
-        end
+        notification_test()
     end
     if (e.command == "/toastynotif settings") then
         settings_window_display[1] = not(settings_window_display[1])
@@ -401,6 +428,12 @@ local function settings_window_render()
         --imgui.SetNextWindowSize({500, 500}, ImGuiCond_None)
         if imgui.Begin("Settings##settings", settings_window_display, settings_window_flags) then
             local s = addon_settings
+            if logo_image == nil then
+                logo_image = load_texture_from_file("logo.png")
+            else
+                imgui.SetCursorPosX((imgui.GetWindowWidth()- 236) * 0.5 )
+                imgui.Image(tonumber(ffi.cast("uint32_t", logo_image.image)), {236, 193})
+            end
             if imgui.CollapsingHeader("Settings") then
                 imgui.BeginTable("settings_table", 2)
                 imgui.TableNextRow()
@@ -513,8 +546,11 @@ local function settings_window_render()
                     end
                     imgui.EndCombo()
                 end
-                if (imgui.Button("Preview")) then
+                if (imgui.Button("Preview sound")) then
                     play_sound(s.sound)
+                end
+                if (imgui.Button("Preview toast")) then
+                    notification_test()
                 end
                 imgui.EndTable()
                 
@@ -541,6 +577,7 @@ end
 ashita.events.register("load", "load_callback1", function(e)
     current_frame = os.clock()
     get_sounds_in_directory()
+    logo_image = load_texture_from_file("logo.png")
 end)
 
 ashita.events.register('text_in', 'text_in_callback1', function (e)
