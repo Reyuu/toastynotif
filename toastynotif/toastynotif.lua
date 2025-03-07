@@ -64,6 +64,19 @@ local addon_default_settings = T{
 
 local addon_settings = settings.load(addon_default_settings)
 
+local item_cache = {}
+
+local function cache_item(item_id)
+    local item = AshitaCore:GetResourceManager():GetItemById(item_id);
+    if item == nil then
+        return false
+    end
+    item_cache[tostring(item.Name[1]):lower()] = item_id
+    item_cache[tostring(item.LogNameSingular[1]):lower()] = item_id
+    item_cache[tostring(item.LogNamePlural[1]):lower()] = item_id
+    return true
+end
+
 local function get_sounds_in_directory()
     for f in io.popen("dir \""..sounds_directory.."\" /b"):lines() do
         table.insert(sounds_files, f)
@@ -225,27 +238,36 @@ local function toast_update()
                     drawn_objects[slot].y = drawn_objects[slot].y + ((addon_settings.rectangle.height + addon_settings.padding) * (slot - 1))
                 end
                 local searchable_string = drawn_objects[slot].text
+                searchable_string = string.gsub(searchable_string, "%d+ ", "")
                 searchable_string = string.gsub(searchable_string, "a ", "")
-                -- there are all of thosee weird quantifiers for items, hangup from japanese version probably
-                searchable_string = string.gsub(searchable_string, "pot of ", "")
-                searchable_string = string.gsub(searchable_string, "bag of ", "")
-                searchable_string = string.gsub(searchable_string, "clump of ", "")
-                searchable_string = string.gsub(searchable_string, "strip of ", "")
                 searchable_string = string.gsub(searchable_string, "an ", "")
                 searchable_string = string.gsub(searchable_string, "the ", "")
-                searchable_string = string.gsub(searchable_string, "The ", "")
-                searchable_string = string.gsub(searchable_string, "%d+ ", "")
-                if searchable_string == "Gausebit wildgrass" then
-                    searchable_string = "Gausebit Grass"
+                local cached_item = item_cache[searchable_string:lower()]
+
+                local item_id = nil
+                if not(cached_item == nil) then
+                    item_id = cached_item
+                else
+                    -- there are all of thosee weird quantifiers for items, hangup from japanese version probably
+                    searchable_string = string.gsub(searchable_string, "pot of ", "")
+                    searchable_string = string.gsub(searchable_string, "bag of ", "")
+                    searchable_string = string.gsub(searchable_string, "clump of ", "")
+                    searchable_string = string.gsub(searchable_string, "strip of ", "")
+                    searchable_string = string.gsub(searchable_string, "slice of ", "")
+                    if searchable_string == "gil" then
+                        searchable_string = "Counterfeit Gil"
+                    end
+                    item_id = AshitaCore:GetResourceManager():GetItemByName(searchable_string, 2)
+                    if not(item_id == nil) then
+                        item_id = item_id.Id
+                    end
                 end
-                if searchable_string == "gil" then
-                    searchable_string = "Counterfeit Gil"
-                end
-                local item_id = AshitaCore:GetResourceManager():GetItemByName(searchable_string, 2)
+
                 if not(item_id == nil) then
-                    drawn_objects[slot].item_icon = load_item_texture_pointer(item_id.Id)
+                    drawn_objects[slot].item_icon = load_item_texture_pointer(item_id)
                 end
                 
+                -- Animations 
                 if addon_settings.animation.horizontal == "to_left" then
                     local to_x = drawn_objects[slot].x
                     drawn_objects[slot].x = to_x - addon_settings.rectangle.width - addon_settings.padding
@@ -542,5 +564,12 @@ ashita.events.register("d3d_present", "d3d_present_callback1", function ()
     if settings_window_display or not(next(drawn_objects) == nil) then
         toast_render()
         settings_window_render()
+    end
+end)
+
+ashita.events.register("packet_in", "packet_in_callback1", function (e)
+    if (e.id == 0x00D2) then
+        local item_id = struct.unpack("<h", e.data_modified, 0x11) -- this took 10 years off my life to figure out
+        cache_item(item_id)
     end
 end)
